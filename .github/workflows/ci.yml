@@ -35,8 +35,8 @@ jobs:
 
       - name: Build Docker images
         run: |
-          docker build -t openrent-eu-backend -f backend/Dockerfile backend
-          docker build -t openrent-eu-frontend -f frontend/Dockerfile frontend
+          docker build -t openrent-eu-backend -f backend/Dockerfile .
+          docker build -t openrent-eu-frontend -f frontend/Dockerfile .
 
       - name: Smoke test backend
         run: |
