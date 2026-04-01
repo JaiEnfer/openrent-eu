@@ -156,7 +156,7 @@ If you're using Docker Compose, the entrypoint already runs `alembic upgrade hea
 - I added an alias in [backend/app/main.py](backend/app/main.py): `aap = app` so `uvicorn app.main:aap` works if you mistype the module target.
 - If Vite reports port in use, kill the process using that port (e.g. `taskkill /PID <pid> /F` on Windows) or run `npx vite --port 5173`.
 
-🛣️ Roadmap
+## 🛣️ Roadmap
 
 Short-term
 
