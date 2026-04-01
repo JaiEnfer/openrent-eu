@@ -1,229 +1,260 @@
 # OpenRent EU
 
-**OpenRent** EU is an open-source rental aggregation platform for Europe.
+[![CI](https://github.com/JaiEnfer/openrent-eu/actions/workflows/ci.yml/badge.svg)](https://github.com/JaiEnfer/openrent-eu/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Backend: FastAPI](https://img.shields.io/badge/backend-FastAPI-009688?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
+[![Frontend: React](https://img.shields.io/badge/frontend-React-20232A?logo=react&logoColor=61DAFB)](https://react.dev/)
+[![Docker Ready](https://img.shields.io/badge/docker-ready-2496ED?logo=docker&logoColor=white)](https://www.docker.com/)
+[![Kubernetes Manifests](https://img.shields.io/badge/k8s-manifests-326CE5?logo=kubernetes&logoColor=white)](https://kubernetes.io/)
 
-It helps users **search, compare, and evaluate rental listings** across multiple sources, while allowing agencies and landlords to upload and manage inventory.
+OpenRent EU is an open-source rental aggregation platform for Europe.
 
-## 🚀 Features
-For Renters
-- 🔍 Search listings by city, country, and rent
-- 📊 Compare up to 3 listings side-by-side
-- 💰 Calculate total move-in cost (rent + deposit)
-- ⚠️ View scam risk score and indicators
-- 🌍 Multi-country support (Europe-focused)
+It helps users search, compare, and evaluate rental listings across multiple sources, while giving agencies and landlords a structured way to upload and manage inventory.
 
-For Agencies / Landlords
-- 📤 Upload listings via CSV
-- 🧩 Structured data ingestion pipeline
-- 🔄 Automatic normalization and deduplication
-- 📦 Centralized listing storage
+The project combines a FastAPI backend, a React frontend, and a normalization pipeline to turn fragmented rental data into a searchable, comparable rental experience.
 
-## 🧠 Architecture Overview
+## Overview
 
-OpenRent EU is designed as a data ingestion + normalization platform, not just a frontend app.
+OpenRent EU is designed as a data ingestion and listing normalization platform, not just a property-search UI.
 
-Core Layers
-1. Ingestion Layer
-2. Raw Data Layer
-- Stores original listing payloads
-- Preserves source data for auditing
-4. Deduplication Engine
-- Detects duplicate listings across sources
-- Maintains a single canonical listing
-5. Search API
-- FastAPI-based backend
-- Query by city, country, rent
-6. Frontend
-- React + Vite
-- Search, compare, upload UI
+It is built to support:
 
-## 🏗️ Tech Stack
-Backend
+- Cross-source rental search
+- CSV-based listing ingestion
+- Data normalization and deduplication
+- Canonical listing storage
+- Backend APIs for search and upload workflows
+- A modern frontend for renters, agencies, and landlords
+
+## Features
+
+### For Renters
+
+- Search listings by city, country, and rent
+- Compare listings side by side
+- Estimate move-in costs such as rent and deposit
+- View scam risk indicators
+- Browse a Europe-focused rental experience
+
+### For Agencies and Landlords
+
+- Upload listings via CSV
+- Use a structured ingestion pipeline
+- Normalize incoming listing data automatically
+- Reduce duplicates across sources
+- Manage inventory through a central backend
+
+## Architecture
+
+### Core Layers
+
+1. Ingestion layer  
+   Accepts raw listing data from supported sources and CSV uploads.
+2. Raw data layer  
+   Preserves original listing payloads for traceability and auditing.
+3. Normalization layer  
+   Converts heterogeneous source data into a consistent schema.
+4. Deduplication layer  
+   Detects duplicate listings and maintains canonical records.
+5. Search API  
+   Exposes listing data through FastAPI endpoints.
+6. Frontend  
+   Delivers a React-based interface for browsing and comparing listings.
+
+## Tech Stack
+
+### Backend
+
 - FastAPI
 - Pydantic
+- SQLAlchemy
+- Alembic
+- Gunicorn + Uvicorn
 
-- JavaScript (ES6)
+### Frontend
 
-Data / Processing
+- React
+- Vite
+- JavaScript
+
+### Infrastructure
+
+- Docker
+- Docker Compose
+- GitHub Actions
+- Kubernetes manifests
+- Traefik configuration
+
+### Data Processing
+
 - CSV ingestion
-- Normalization pipeline
+- Listing normalization
+- Deduplication workflows
+
+## Project Structure
+
 ```text
 openrent-eu/
-├── backend/
-│   │   ├── routers/         # API endpoints
-│   │   ├── schemas/         # Pydantic schemas
-│
-├── frontend/
-│   ├── src/
-│   ├── index.html
-│   └── vite.config.js
-│
-└── README.md
+|-- backend/
+|   |-- alembic/
+|   |-- app/
+|   |   |-- adapters/      # Source ingestion adapters
+|   |   |-- core/          # Configuration and database setup
+|   |   |-- models/        # SQLAlchemy models
+|   |   |-- routers/       # FastAPI endpoints
+|   |   |-- schemas/       # Pydantic schemas
+|   |   |-- services/      # Normalization and deduplication logic
+|   |   `-- utils/
+|   |-- data/
+|   |-- Dockerfile
+|   `-- requirements.txt
+|-- frontend/
+|   |-- src/
+|   |-- Dockerfile
+|   `-- package.json
+|-- k8s/
+|-- traefik/
+|-- docker-compose.yml
+`-- README.md
 ```
 
-## ⚙️ Quickstart (development)
+## Quickstart
 
-Clone the repo and open the workspace:
+### Run with Docker
 
-```sh
-git clone https://github.com/your-username/openrent-eu.git
-cd openrent-eu
+From the repository root:
+
+```powershell
+docker compose up --build
 ```
 
-Backend (PowerShell)
+Application URLs:
 
-```ps1
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:8000`
+- API docs: `http://localhost:8000/docs`
+
+To stop the stack:
+
+```powershell
+docker compose down
+```
+
+### Run without Docker
+
+Backend:
+
+```powershell
 cd backend
-python -m venv .venv         # only once
+python -m venv .venv
 . .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
-# start backend (from backend/)
 python -m uvicorn app.main:app --reload --port 8000
-# or, if you used the alias I added, you can run:
-python -m uvicorn app.main:aap --reload --port 8000
 ```
 
-Backend endpoints
+Frontend in a second terminal:
 
-- API root: http://127.0.0.1:8000/
-- Swagger: http://127.0.0.1:8000/docs
-
-Notes:
-- The configuration file is [backend/.env](backend/.env) — set `DATABASE_URL` and `FRONTEND_ORIGIN` there.
-- I fixed a malformed `.env` and replaced a corrupted `requirements.txt` with a UTF‑8 list.
-
-Frontend
-
-```sh
+```powershell
 cd frontend
 npm install
-# dev server (Vite)
 npm run dev
-# or force a specific port:
-npx vite --port 5173
 ```
 
-- Default dev URL: http://localhost:5173 (Vite may choose another free port if 5173 is in use).
-- The frontend files are in [frontend/src](frontend/src) — I added UI polish, a hero, logo, and thumbnails.
+Development URLs:
 
-## 📤 CSV Upload Format
+- Frontend: `http://localhost:5173`
+- Backend API: `http://localhost:8000`
+- API docs: `http://localhost:8000/docs`
 
-Agencies can upload listings using CSV with the following columns:
+## Configuration
+
+The backend reads local configuration from `backend/.env`.
+
+Example values:
+
+```env
+APP_NAME=OpenRent EU API
+FRONTEND_ORIGIN=http://localhost:5173
+DATABASE_URL=sqlite:///./openrent.db
+```
+
+For production, use secrets or your cloud provider's secret manager instead of committing sensitive values.
+
+## API
+
+### Key Endpoints
+
+- `GET /`
+- `GET /health`
+- `GET /api/listings/`
+- `POST /api/ingest/csv`
+- `POST /api/ingest/csv-upload`
+
+### Listings Query Parameters
+
+- `city`
+- `country`
+- `max_rent`
+
+### CSV Upload Format
+
+Expected CSV columns:
 
 ```text
 external_id,title,description,country,city,postal_code,street,monthly_rent,deposit,fees,bedrooms,bathrooms,size_m2,furnished,utilities_included,scam_score,listing_url,contact_name,contact_type
 ```
 
-## 🔌 API Endpoints
+## Database and Migrations
 
-### Listings
+Alembic is configured for schema migrations.
 
-GET /api/listings/
+Run migrations locally:
 
-Query params:
-
-- city
-- country
-- max_rent
-
-#### Ingest CSV (Sample)
-
-POST /api/ingest/csv
-
-#### Upload CSV
-
-POST /api/ingest/csv-upload
-
-Form-data:
-
-- file: CSV file
-
-## 🧪 Development Notes
-
-Extra notes and troubleshooting
- - The backend runs Alembic migrations at container start (see `backend/entrypoint.sh`).
- - To create and manage migrations locally:
-
-```sh
+```powershell
 cd backend
-. .venv\Scripts\Activate.ps1   # or source .venv/bin/activate
-pip install -r requirements.txt
-alembic revision --autogenerate -m "create initial tables"
+. .venv\Scripts\Activate.ps1
 alembic upgrade head
 ```
 
-If you're using Docker Compose, the entrypoint already runs `alembic upgrade head` on startup.
-- I added an alias in [backend/app/main.py](backend/app/main.py): `aap = app` so `uvicorn app.main:aap` works if you mistype the module target.
-- If Vite reports port in use, kill the process using that port (e.g. `taskkill /PID <pid> /F` on Windows) or run `npx vite --port 5173`.
+Create a new migration:
 
-## 🛣️ Roadmap
+```powershell
+cd backend
+. .venv\Scripts\Activate.ps1
+alembic revision --autogenerate -m "describe change"
+```
 
-Short-term
+The container entrypoint also runs `alembic upgrade head` on startup.
 
+## CI/CD
 
-Mid-term
-I implemented several of these already:
+GitHub Actions is configured in `.github/workflows/ci.yml` to:
 
-- Gunicorn + Uvicorn worker is used in the backend container (`backend/entrypoint.sh`).
-- Alembic is configured; an initial baseline migration is provided in `backend/alembic/versions/0001_initial_baseline.py`.
-- GitHub Actions CI workflow added at `.github/workflows/ci.yml` to build images and run a smoke test.
-- Docker Compose updated to load `backend/.env` via `env_file` in the backend service (use Docker secrets in prod).
+- Install backend dependencies
+- Build the frontend
+- Build Docker images
+- Run a backend smoke test
 
-Remaining recommended steps (I can continue):
+## Kubernetes
 
-- Configure Traefik (or nginx reverse proxy) with TLS and Let’s Encrypt for production domains.
-- Add k8s manifests / Helm chart for container orchestration.
-- Add structured logging and Sentry integration.
-- Add automated DB migration checks in CI and a staging rollout pipeline.
+Starter manifests are available in `k8s/`:
 
-Tell me which of the remaining items you'd like me to implement next, or say "do all" and I'll continue working through them in order.
-Long-term
-- AI-powered rental assistant
-- Fraud detection models
-- Tenant rights RAG (per country)
-- Multi-language support
+- `k8s/backend-deployment.yaml`
+- `k8s/frontend-deployment.yaml`
+- `k8s/ingress.yaml`
 
-## ⚖️ Legal & Compliance
+These manifests are a starting point and still require environment-specific image names, secrets, ingress hosts, and production infrastructure choices.
 
-OpenRent EU is designed with EU regulations in mind:
+## Production Notes
 
-- GDPR-aware data handling
-- Source attribution required
-- No unauthorized scraping
-- API/feed-first ingestion strategy
+The repository includes production-oriented building blocks:
 
-## 🤝 Contributing
+- Traefik configuration in `traefik/`
+- Kubernetes manifests in `k8s/`
+- Structured logging support in the backend
+- Optional Sentry integration through environment variables
 
-Contributions are welcome.
-
-Steps:
-
-1. Fork the repo
-2. Create a feature branch
-3. Submit a pull request
-
-
-## 📄 License
-
-MIT License (recommended for open-source projects)
-
-## 💡 Vision
-
-OpenRent EU aims to become:
-
-The unified rental search and comparison layer for Europe
-
-Connecting renters, agencies, and platforms through a transparent and standardized data ecosystem
-
-## 🛡️ Production Hardening (recommended)
-
-Short checklist to move from local dev to a production deployment:
-
-- **Reverse proxy & TLS**: Use Traefik or a cloud load balancer with Let's Encrypt. I added example Traefik config in `traefik/traefik.yml` and `traefik/dynamic_conf.yml`.
-- **Secrets**: Store `DATABASE_URL`, `SENTRY_DSN`, and other sensitive values in Docker secrets or your cloud provider's secret manager. See `k8s/` for Kubernetes secret references.
-- **Structured logging & Sentry**: Backend now supports structured JSON logs and optional Sentry reporting. Set `SENTRY_DSN` in your environment (or secret) to enable it.
-
-Example `.env` entries for production (DO NOT COMMIT):
+Example production environment values:
 
 ```env
 DATABASE_URL=postgresql://user:pass@db:5432/openrent
@@ -231,4 +262,45 @@ SENTRY_DSN=https://public@sentry.example.com/12345
 FRONTEND_ORIGIN=https://openrent.example.com
 ```
 
-I added basic Kubernetes manifests in `k8s/` (`backend-deployment.yaml`, `frontend-deployment.yaml`, `ingress.yaml`) and a Traefik configuration in `traefik/` to help bootstrap a production deployment. These are starting points — you'll want to wire in your CI/CD, registry, and cert-manager or cloud TLS solution.
+## Roadmap
+
+### Near Term
+
+- Improve production deployment workflows
+- Expand backend validation and migration checks
+- Strengthen ingestion coverage for additional sources
+
+### Longer Term
+
+- AI-powered rental assistant
+- Fraud detection models
+- Tenant-rights knowledge support by country
+- Multi-language support
+
+## Legal and Compliance
+
+OpenRent EU is intended to align with responsible European data practices:
+
+- GDPR-aware handling
+- Source attribution
+- Feed-first or authorized ingestion
+- No unauthorized scraping
+
+## Contributing
+
+Contributions are welcome.
+
+Typical workflow:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Open a pull request
+
+## License
+
+This project is licensed under the MIT License.
+
+## Vision
+
+OpenRent EU aims to become the unified rental search and comparison layer for Europe, connecting renters, agencies, and platforms through a more transparent and standardized data ecosystem.
