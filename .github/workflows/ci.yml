@@ -1,0 +1,46 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12'
+
+      - name: Install backend deps
+        run: |
+          cd backend
+          python -m venv .venv
+          . .venv/bin/activate
+          pip install -r requirements.txt
+
+      - name: Lint frontend (npm)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: |
+          cd frontend
+          npm ci
+          npm run build
+
+      - name: Build Docker images
+        run: |
+          docker build -t openrent-eu-backend -f backend/Dockerfile backend
+          docker build -t openrent-eu-frontend -f frontend/Dockerfile frontend
+
+      - name: Smoke test backend
+        run: |
+          docker run --rm -d --name smoke-backend -p 8001:8000 openrent-eu-backend
+          sleep 3
+          curl -f http://localhost:8001/health
+          docker kill smoke-backend || true

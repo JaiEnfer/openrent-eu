@@ -1,0 +1,6 @@
+http:
+  routers:
+    dashboard:
+      rule: "Host(`traefik.localhost`)"
+      service: api@internal
+      tls: {}
