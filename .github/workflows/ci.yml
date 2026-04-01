@@ -41,6 +41,20 @@ jobs:
       - name: Smoke test backend
         run: |
           docker run --rm -d --name smoke-backend -p 8001:8000 openrent-eu-backend
-          sleep 3
-          curl -f http://localhost:8001/health
+          for i in $(seq 1 20); do
+            if curl -fsS http://localhost:8001/health; then
+              docker kill smoke-backend || true
+              exit 0
+            fi
+
+            if [ "$(docker inspect -f '{{.State.Running}}' smoke-backend 2>/dev/null)" != "true" ]; then
+              docker logs smoke-backend || true
+              exit 1
+            fi
+
+            sleep 2
+          done
+
+          docker logs smoke-backend || true
           docker kill smoke-backend || true
+          exit 1
