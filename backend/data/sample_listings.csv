@@ -1,0 +1,5 @@
+external_id,title,description,country,city,postal_code,street,monthly_rent,deposit,fees,bedrooms,bathrooms,size_m2,furnished,utilities_included,listing_url,contact_name,contact_type
+csv-001,1-bedroom apartment near city center,Bright apartment close to transport,Germany,Berlin,10115,Invalidenstrasse 10,1250,2500,0,1,1,48,true,false,https://example.com/1,Anna Schmidt,agency
+csv-002,Studio flat with utilities included,Compact studio suitable for one tenant,Portugal,Lisbon,1100,Avenida Central 22,950,950,0,0,1,30,false,true,https://example.com/2,Carlos Mendes,landlord
+csv-003,Modern apartment close to metro,Modern apartment with balcony,Spain,Madrid,28001,Calle Mayor 14,1350,2700,0,2,1,72,false,false,https://example.com/3,Lucia Ramos,agency
+csv-004,Shared flat room for students,Single room in shared student flat,Germany,Berlin,10961,Bergmannstrasse 8,700,700,0,1,1,18,true,true,https://example.com/4,Student Housing Berlin,platform
